@@ -1,10 +1,16 @@
 <template>
-  <div id="app"></div>
+  <div id="app">
+    <h1>Trivia app made with Vue.js</h1>
+    <GameView></GameView>
+  </div>
 </template>
 
 <script>
+import GameView from './components/GameView.vue';
+
 export default {
   name: 'App',
+  components: { GameView },
 };
 </script>
 
