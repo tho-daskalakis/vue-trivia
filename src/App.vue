@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import GameView from './components/GameView.vue';
+import GameView from './components/Game/GameView.vue';
 
 export default {
   name: 'App',
