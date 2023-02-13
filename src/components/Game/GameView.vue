@@ -1,9 +1,9 @@
 <template>
   <div class="game-view">
-    <QuestionDisplayComp></QuestionDisplayComp>
+    <QuestionDisplayComp
+      v-bind:question-text="questionText"></QuestionDisplayComp>
     <AnswersDisplayComp></AnswersDisplayComp>
-    <p>{{ questionText }}</p>
-    <button @click="callAPI">New question</button>
+    <button class="get-question-btn" @click="callAPI">New question</button>
   </div>
 </template>
 
@@ -16,7 +16,7 @@ export default {
   components: { QuestionDisplayComp, AnswersDisplayComp },
   data() {
     return {
-      questionText: 'Ho!',
+      questionText: 'Hungry for apples?',
     };
   },
   methods: {
@@ -32,7 +32,7 @@ export default {
       if (response.ok) {
         const data = await response.json();
         console.log(data);
-        this.questionText = data.response_code;
+        this.questionText = data.results[0].question;
       } else {
         alert(response.statusText);
       }
@@ -46,5 +46,11 @@ export default {
   display: grid;
   grid-template-rows: repeat(2, 200px);
   grid-template-columns: 1fr;
+}
+
+.get-question-btn {
+  width: 200px;
+  height: 50px;
+  justify-self: center;
 }
 </style>

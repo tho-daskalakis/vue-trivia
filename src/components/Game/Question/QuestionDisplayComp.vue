@@ -1,10 +1,11 @@
 <template>
-  <p class="question-display">Hungry for apples?</p>
+  <p class="question-display">{{ questionText }}</p>
 </template>
 
 <script>
 export default {
   name: 'QuestionDisplayComp',
+  props: ['questionText'],
 };
 </script>
 
