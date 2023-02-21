@@ -16,6 +16,7 @@ export default {
   components: { QuestionDisplayComp, AnswersDisplayComp },
   data() {
     return {
+      sessionToken: '',
       questionText: 'Waiting for question...',
       answers: [
         { text: '...' },
@@ -25,13 +26,27 @@ export default {
       ],
     };
   },
+  created: function () {
+    // Get a session token
+    this.getSessionToken();
+  },
   methods: {
+    getSessionToken: async function () {
+      const response = await fetch(
+        'https://opentdb.com/api_token.php?command=request'
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        // console.log(data);
+        this.sessionToken = data.token;
+      } else {
+        alert(response.statusText);
+      }
+    },
     callAPI: async function () {
       const response = await fetch(
-        'https://opentdb.com/api.php?amount=1&category=9&difficulty=easy&type=multiple',
-        {
-          mode: 'cors',
-        }
+        `https://opentdb.com/api.php?amount=1&category=9&difficulty=easy&type=multiple&token=${this.sessionToken}`
       );
 
       if (response.ok) {
