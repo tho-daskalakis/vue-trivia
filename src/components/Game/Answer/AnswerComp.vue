@@ -1,5 +1,5 @@
 <template>
-  <button class="answer-btn">
+  <button class="answer-btn" v-on:click="$emit('show-answers', answer.correct)">
     <p class="answer">{{ answer.text }}</p>
   </button>
 </template>

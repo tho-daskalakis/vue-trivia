@@ -1,9 +1,17 @@
 <template>
   <div class="answers-display">
-    <AnswerComp v-bind:answer="answers[0]"></AnswerComp>
-    <AnswerComp v-bind:answer="answers[1]"></AnswerComp>
-    <AnswerComp v-bind:answer="answers[2]"></AnswerComp>
-    <AnswerComp v-bind:answer="answers[3]"></AnswerComp>
+    <AnswerComp
+      v-bind:answer="answers[0]"
+      @show-answers="onShowAnswers"></AnswerComp>
+    <AnswerComp
+      v-bind:answer="answers[1]"
+      @show-answers="onShowAnswers"></AnswerComp>
+    <AnswerComp
+      v-bind:answer="answers[2]"
+      @show-answers="onShowAnswers"></AnswerComp>
+    <AnswerComp
+      v-bind:answer="answers[3]"
+      @show-answers="onShowAnswers"></AnswerComp>
   </div>
 </template>
 
@@ -20,7 +28,11 @@ export default {
   },
   components: { AnswerComp },
   methods: {
-    onPlayerClick: function () {},
+    onShowAnswers: function (isCorrect) {
+      console.log(isCorrect);
+      if (isCorrect) alert('Congratulations! You are correct!');
+      else alert("You didn't get this one right... Better luck next time!");
+    },
   },
 };
 </script>
