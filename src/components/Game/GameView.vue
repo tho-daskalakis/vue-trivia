@@ -2,7 +2,7 @@
   <div class="game-view">
     <QuestionDisplayComp
       v-bind:question-text="questionText"></QuestionDisplayComp>
-    <AnswersDisplayComp></AnswersDisplayComp>
+    <AnswersDisplayComp v-bind:answers="answers"></AnswersDisplayComp>
     <button class="get-question-btn" @click="callAPI">New question</button>
   </div>
 </template>
@@ -16,7 +16,13 @@ export default {
   components: { QuestionDisplayComp, AnswersDisplayComp },
   data() {
     return {
-      questionText: 'Hungry for apples?',
+      questionText: 'Waiting for question...',
+      answers: [
+        { text: '...' },
+        { text: '...' },
+        { text: '...' },
+        { text: '...' },
+      ],
     };
   },
   methods: {
@@ -27,15 +33,53 @@ export default {
           mode: 'cors',
         }
       );
-      // console.log(response);
 
       if (response.ok) {
         const data = await response.json();
-        console.log(data);
-        this.questionText = data.results[0].question;
+        // console.log(data);
+
+        // Handle question
+        const question = data.results[0].question;
+        this.handleQuestion(question);
+
+        // Handle answers
+        const correctAnswer = data.results[0].correct_answer;
+        const incorrectAnswers = data.results[0].incorrect_answers;
+        this.handleAnswers(correctAnswer, incorrectAnswers);
       } else {
         alert(response.statusText);
       }
+    },
+    handleQuestion: function (question) {
+      this.questionText = this.parseHTML(question);
+    },
+    handleAnswers: function (correct_answer, incorrect_answers) {
+      const answers = [
+        { text: this.parseHTML(correct_answer), correct: true },
+        { text: this.parseHTML(incorrect_answers[0]), correct: false },
+        { text: this.parseHTML(incorrect_answers[1]), correct: false },
+        { text: this.parseHTML(incorrect_answers[2]), correct: false },
+      ];
+
+      this.shuffleArray(answers);
+      this.answers = answers;
+    },
+    shuffleArray: function (arr) {
+      for (let i = 0; i < arr.length; i++) {
+        const randomIndex = this.getRandomInt(arr.length);
+        const temp = arr[randomIndex];
+        arr[randomIndex] = arr[i];
+        arr[i] = temp;
+      }
+    },
+    getRandomInt: function (max) {
+      return Math.floor(Math.random() * max);
+    },
+    parseHTML: function (input) {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(input, 'text/html');
+
+      return doc.documentElement.textContent;
     },
   },
 };

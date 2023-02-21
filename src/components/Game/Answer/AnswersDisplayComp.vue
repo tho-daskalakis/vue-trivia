@@ -1,9 +1,9 @@
 <template>
   <div class="answers-display">
-    <AnswerComp></AnswerComp>
-    <AnswerComp></AnswerComp>
-    <AnswerComp></AnswerComp>
-    <AnswerComp></AnswerComp>
+    <AnswerComp v-bind:answer="answers[0]"></AnswerComp>
+    <AnswerComp v-bind:answer="answers[1]"></AnswerComp>
+    <AnswerComp v-bind:answer="answers[2]"></AnswerComp>
+    <AnswerComp v-bind:answer="answers[3]"></AnswerComp>
   </div>
 </template>
 
@@ -12,7 +12,16 @@ import AnswerComp from './AnswerComp.vue';
 
 export default {
   name: 'AnswersDisplayComp',
+  props: {
+    answers: {
+      type: Array,
+      required: true,
+    },
+  },
   components: { AnswerComp },
+  methods: {
+    onPlayerClick: function () {},
+  },
 };
 </script>
 

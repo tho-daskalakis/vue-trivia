@@ -1,10 +1,18 @@
 <template>
-  <p class="answer">Me hungery</p>
+  <button class="answer-btn">
+    <p class="answer">{{ answer.text }}</p>
+  </button>
 </template>
 
 <script>
 export default {
   name: 'AnswerComp',
+  props: {
+    answer: {
+      type: Object,
+      required: true,
+    },
+  },
 };
 </script>
 
@@ -14,7 +22,16 @@ export default {
   align-self: center;
 }
 
-.answer > p {
+.answer-btn {
+  margin: 10px;
+  border-radius: 5px;
+  border: none;
+}
+
+.answer-btn:hover {
+  background-color: bisque;
+}
+.answer {
   margin: auto;
 }
 </style>
