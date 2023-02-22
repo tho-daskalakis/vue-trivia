@@ -32,6 +32,7 @@ export default {
       ],
       showAnswers: false,
       score: 0,
+      questionCount: 0,
     };
   },
   created: function () {
@@ -62,24 +63,28 @@ export default {
     },
 
     callAPI: async function () {
-      const response = await fetch(
-        `https://opentdb.com/api.php?amount=1&category=9&difficulty=easy&type=multiple&token=${this.sessionToken}`
-      );
+      try {
+        const response = await fetch(
+          `https://opentdb.com/api.php?amount=1&category=9&difficulty=easy&type=multiple&token=${this.sessionToken}`
+        );
 
-      if (response.ok) {
-        const data = await response.json();
-        // console.log(data);
+        if (response.ok) {
+          const data = await response.json();
+          // console.log(data);
 
-        // Handle question
-        const question = data.results[0].question;
-        this.handleQuestion(question);
+          // Handle question
+          const question = data.results[0].question;
+          this.handleQuestion(question);
 
-        // Handle answers
-        const correctAnswer = data.results[0].correct_answer;
-        const incorrectAnswers = data.results[0].incorrect_answers;
-        this.handleAnswers(correctAnswer, incorrectAnswers);
-      } else {
-        alert(response.statusText);
+          // Handle answers
+          const correctAnswer = data.results[0].correct_answer;
+          const incorrectAnswers = data.results[0].incorrect_answers;
+          this.handleAnswers(correctAnswer, incorrectAnswers);
+        } else {
+          alert(response.statusText);
+        }
+      } catch (error) {
+        alert(error);
       }
     },
     handleQuestion: function (question) {
