@@ -9,6 +9,7 @@
     <button class="get-question-btn" @click="handleOnClick">
       New question
     </button>
+    <p class="score-display">Your current score: {{ score }}</p>
   </div>
 </template>
 
@@ -30,6 +31,7 @@ export default {
         { text: '...', correct: null },
       ],
       showAnswers: false,
+      score: 0,
     };
   },
   created: function () {
@@ -52,7 +54,7 @@ export default {
     },
     onHasChosenAnswer: function (isCorrect) {
       this.showAnswers = true;
-      return isCorrect;
+      if (isCorrect) this.score += 1;
     },
     handleOnClick: function () {
       this.showAnswers = false;
@@ -118,7 +120,7 @@ export default {
 <style scoped>
 .game-view {
   display: grid;
-  grid-template-rows: repeat(2, 200px);
+  grid-template-rows: repeat(2, 200px) repeat(2, 100px);
   grid-template-columns: 1fr;
 }
 
@@ -126,5 +128,11 @@ export default {
   width: 200px;
   height: 50px;
   justify-self: center;
+  align-self: center;
+}
+
+.score-display {
+  justify-self: center;
+  align-self: center;
 }
 </style>
