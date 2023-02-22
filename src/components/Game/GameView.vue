@@ -2,8 +2,13 @@
   <div class="game-view">
     <QuestionDisplayComp
       v-bind:question-text="questionText"></QuestionDisplayComp>
-    <AnswersDisplayComp v-bind:answers="answers"></AnswersDisplayComp>
-    <button class="get-question-btn" @click="callAPI">New question</button>
+    <AnswersDisplayComp
+      v-bind:answers="answers"
+      v-bind:hasChosenAnswer="showAnswers"
+      @has-chosen-answer="onHasChosenAnswer"></AnswersDisplayComp>
+    <button class="get-question-btn" @click="handleOnClick">
+      New question
+    </button>
   </div>
 </template>
 
@@ -19,11 +24,12 @@ export default {
       sessionToken: '',
       questionText: 'Waiting for question...',
       answers: [
-        { text: '...' },
-        { text: '...' },
-        { text: '...' },
-        { text: '...' },
+        { text: '...', correct: null },
+        { text: '...', correct: null },
+        { text: '...', correct: null },
+        { text: '...', correct: null },
       ],
+      showAnswers: false,
     };
   },
   created: function () {
@@ -44,6 +50,15 @@ export default {
         alert(response.statusText);
       }
     },
+    onHasChosenAnswer: function (isCorrect) {
+      this.showAnswers = true;
+      return isCorrect;
+    },
+    handleOnClick: function () {
+      this.showAnswers = false;
+      this.callAPI();
+    },
+
     callAPI: async function () {
       const response = await fetch(
         `https://opentdb.com/api.php?amount=1&category=9&difficulty=easy&type=multiple&token=${this.sessionToken}`

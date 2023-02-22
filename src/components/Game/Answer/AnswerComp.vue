@@ -29,7 +29,7 @@ export default {
 }
 
 .answer-btn:hover {
-  background-color: bisque;
+  border: solid 2px darkgray;
 }
 .answer {
   margin: auto;
