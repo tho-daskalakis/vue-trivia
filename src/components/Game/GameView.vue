@@ -6,16 +6,24 @@
       v-bind:answers="answers"
       v-bind:hasChosenAnswer="showAnswers"
       @has-chosen-answer="onHasChosenAnswer"></AnswersDisplayComp>
-    <button class="get-question-btn" @click="handleOnClick">
-      New question
+    <button
+      v-if="questionCount < 10"
+      class="get-question-btn"
+      @click="handleOnClick">
+      Next question
     </button>
-    <p class="score-display">Your current score: {{ score }}</p>
+    <p v-if="questionCount" class="score-display">
+      Your current score: {{ score }} out of {{ questionCount }} questions
+    </p>
   </div>
 </template>
 
 <script>
 import AnswersDisplayComp from './Answer/AnswersDisplayComp.vue';
 import QuestionDisplayComp from './Question/QuestionDisplayComp.vue';
+import shuffleArray from './utils/shuffleArray';
+import getRandomInt from './utils/getRandomInt';
+import parseHTML from './utils/parseHTML';
 
 export default {
   name: 'GameView',
@@ -55,9 +63,11 @@ export default {
     },
     onHasChosenAnswer: function (isCorrect) {
       this.showAnswers = true;
-      if (isCorrect) this.score += 1;
+      if (isCorrect) this.score++;
+      if (this.questionCount >= 10) this.$emit('show-final-screen', this.score);
     },
     handleOnClick: function () {
+      this.questionCount++;
       this.showAnswers = false;
       this.callAPI();
     },
@@ -101,23 +111,9 @@ export default {
       this.shuffleArray(answers);
       this.answers = answers;
     },
-    shuffleArray: function (arr) {
-      for (let i = 0; i < arr.length; i++) {
-        const randomIndex = this.getRandomInt(arr.length);
-        const temp = arr[randomIndex];
-        arr[randomIndex] = arr[i];
-        arr[i] = temp;
-      }
-    },
-    getRandomInt: function (max) {
-      return Math.floor(Math.random() * max);
-    },
-    parseHTML: function (input) {
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(input, 'text/html');
-
-      return doc.documentElement.textContent;
-    },
+    shuffleArray: shuffleArray,
+    getRandomInt: getRandomInt,
+    parseHTML: parseHTML,
   },
 };
 </script>

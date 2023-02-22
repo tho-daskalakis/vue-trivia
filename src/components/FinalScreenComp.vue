@@ -1,0 +1,31 @@
+<template>
+  <div class="final-score-view">
+    <p>
+      You answered {{ score }} questions correct out of 10. Your final score is
+      {{ finalScore }} %.
+    </p>
+    <button @click="onClick">New game</button>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'FinalScreenComp',
+  props: {
+    score: {
+      type: Number,
+      required: true,
+    },
+  },
+  computed: {
+    finalScore: function () {
+      return Math.round((this.score * 100) / 10);
+    },
+  },
+  methods: {
+    onClick: function () {
+      this.$emit('new-game');
+    },
+  },
+};
+</script>
