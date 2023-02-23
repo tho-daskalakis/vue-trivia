@@ -2,13 +2,17 @@
   <div id="app">
     <h1>{{ title }}</h1>
     <GameView
+      :mode="mode"
       v-if="currentScreen === 'game'"
       @show-final-screen="onShowFinalScreen"></GameView>
     <FinalScreenComp
       v-else-if="currentScreen === 'final'"
       :score="finalScore"
       @new-game="onNewGame"></FinalScreenComp>
-    <MenuComp v-else @standard-game="onStandardGame"></MenuComp>
+    <MenuComp
+      v-else
+      @standard-game="onStandardGame"
+      @time-rush="onTimeRush"></MenuComp>
   </div>
 </template>
 
@@ -24,11 +28,22 @@ export default {
     return {
       finalScore: 0,
       currentScreen: 'menu',
+      mode: null,
     };
   },
   computed: {
     title: function () {
-      if (this.currentScreen === 'game') return 'Answer 10 questions!';
+      if (this.currentScreen === 'game') {
+        switch (this.mode) {
+          case 'standard':
+            return 'Answer 10 questions!';
+
+          case 'rush':
+            return 'Answer as many questions before the time runs out!';
+          default:
+            return 'Game mode';
+        }
+      }
       if (this.currentScreen === 'final') return 'Summary';
       return 'Trivia app made with Vue.js';
     },
@@ -39,9 +54,15 @@ export default {
       this.currentScreen = 'final';
     },
     onNewGame: function () {
+      this.mode = 'null';
       this.currentScreen = 'menu';
     },
     onStandardGame: function () {
+      this.mode = 'standard';
+      this.currentScreen = 'game';
+    },
+    onTimeRush: function () {
+      this.mode = 'rush';
       this.currentScreen = 'game';
     },
   },

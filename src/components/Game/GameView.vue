@@ -4,17 +4,21 @@
       v-bind:question-text="questionText"></QuestionDisplayComp>
     <AnswersDisplayComp
       v-bind:answers="answers"
+      v-bind:answersEnabled="answersEnabled"
       v-bind:hasChosenAnswer="showAnswers"
       @has-chosen-answer="onHasChosenAnswer"></AnswersDisplayComp>
     <button
       v-if="questionCount < 10"
+      :disabled="btnDisabled"
       class="get-question-btn"
       @click="handleOnClick">
       Next question
     </button>
-    <p v-if="questionCount" class="score-display">
-      Your current score: {{ score }} out of {{ questionCount }} questions
-    </p>
+    <div class="game-info-display">
+      <p v-if="questionCount" class="score-display">
+        Your current score: {{ score }} out of {{ questionCount }} questions
+      </p>
+    </div>
   </div>
 </template>
 
@@ -28,27 +32,40 @@ import parseHTML from './utils/parseHTML';
 export default {
   name: 'GameView',
   components: { QuestionDisplayComp, AnswersDisplayComp },
+  props: {
+    mode: {
+      type: String,
+      required: true,
+    },
+  },
   data() {
     return {
       sessionToken: '',
-      questionText: 'Waiting for question...',
-      answers: [
-        { text: '...', correct: null },
-        { text: '...', correct: null },
-        { text: '...', correct: null },
-        { text: '...', correct: null },
-      ],
+      questionText: '',
+      answers: [],
+      btnDisabled: true,
+      answersEnabled: false,
       showAnswers: false,
       score: 0,
       questionCount: 0,
+      lives: 3,
     };
   },
   created: function () {
-    // Get a session token
+    this.displayDefaultValues();
     this.getSessionToken();
     this.handleOnClick();
   },
   methods: {
+    displayDefaultValues: function () {
+      this.questionText = 'Waiting for question...';
+      this.answers = [
+        { text: '...', correct: null },
+        { text: '...', correct: null },
+        { text: '...', correct: null },
+        { text: '...', correct: null },
+      ];
+    },
     getSessionToken: async function () {
       const response = await fetch(
         'https://opentdb.com/api_token.php?command=request'
@@ -63,20 +80,44 @@ export default {
       }
     },
     onHasChosenAnswer: function (isCorrect) {
+      this.answersEnabled = false;
       this.showAnswers = true;
+      this.questionCount++;
       if (isCorrect) this.score++;
-      if (this.questionCount >= 10) this.$emit('show-final-screen', this.score);
+
+      if (this.mode === 'standard') {
+        if (this.questionCount >= 10) {
+          this.questionText = 'Waiting for results...';
+          // Wait 1.5 second
+          setTimeout(() => {
+            this.$emit('show-final-screen', this.score);
+            this.showFinalScreen();
+          }, 1500);
+          return;
+        }
+      } else if (this.mode === 'rush') {
+        if (!isCorrect) {
+          this.lives--;
+          if (this.lives < 1) {
+            // TODO: Call final screen
+            return;
+          }
+        }
+      }
+
+      this.btnDisabled = false;
     },
     handleOnClick: function () {
-      this.questionCount++;
       this.showAnswers = false;
+      this.btnDisabled = true;
+      this.displayDefaultValues();
       this.callAPI();
+      this.answersEnabled = true;
     },
-
     callAPI: async function () {
       try {
         const response = await fetch(
-          `https://opentdb.com/api.php?amount=1&category=9&difficulty=easy&type=multiple&token=${this.sessionToken}`
+          `https://opentdb.com/api.php?amount=1&type=multiple&token=${this.sessionToken}`
         );
 
         if (response.ok) {
@@ -112,6 +153,9 @@ export default {
       this.shuffleArray(answers);
       this.answers = answers;
     },
+    showFinalScreen: function () {
+      this.$emit('show-final-screen', this.score);
+    }.bind(this),
     shuffleArray: shuffleArray,
     getRandomInt: getRandomInt,
     parseHTML: parseHTML,

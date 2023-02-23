@@ -1,18 +1,22 @@
 <template>
   <div class="answers-display">
     <AnswerComp
+      v-bind:answersEnabled="answersEnabled"
       v-bind:answer="answers[0]"
       v-bind:class="hasChosenAnswer && answer0"
       @show-answers="onShowAnswers"></AnswerComp>
     <AnswerComp
+      v-bind:answersEnabled="answersEnabled"
       v-bind:answer="answers[1]"
       v-bind:class="hasChosenAnswer && answer1"
       @show-answers="onShowAnswers"></AnswerComp>
     <AnswerComp
+      v-bind:answersEnabled="answersEnabled"
       v-bind:answer="answers[2]"
       v-bind:class="hasChosenAnswer && answer2"
       @show-answers="onShowAnswers"></AnswerComp>
     <AnswerComp
+      v-bind:answersEnabled="answersEnabled"
       v-bind:answer="answers[3]"
       v-bind:class="hasChosenAnswer && answer3"
       @show-answers="onShowAnswers"></AnswerComp>
@@ -27,6 +31,10 @@ export default {
   props: {
     answers: {
       type: Array,
+      required: true,
+    },
+    answersEnabled: {
+      type: Boolean,
       required: true,
     },
     hasChosenAnswer: {

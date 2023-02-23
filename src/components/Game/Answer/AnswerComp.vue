@@ -1,5 +1,8 @@
 <template>
-  <button class="answer-btn" v-on:click="$emit('show-answers', answer.correct)">
+  <button
+    :disabled="!answersEnabled"
+    class="answer-btn"
+    v-on:click="$emit('show-answers', answer.correct)">
     <p class="answer">{{ answer.text }}</p>
   </button>
 </template>
@@ -10,6 +13,10 @@ export default {
   props: {
     answer: {
       type: Object,
+      required: true,
+    },
+    answersEnabled: {
+      type: Boolean,
       required: true,
     },
   },
@@ -26,6 +33,10 @@ export default {
   margin: 10px;
   border-radius: 5px;
   border: none;
+}
+
+.answer-btn:disabled {
+  color: white;
 }
 
 .answer-btn:hover {
