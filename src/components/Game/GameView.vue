@@ -46,6 +46,7 @@ export default {
   created: function () {
     // Get a session token
     this.getSessionToken();
+    this.handleOnClick();
   },
   methods: {
     getSessionToken: async function () {

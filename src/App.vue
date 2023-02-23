@@ -1,36 +1,48 @@
 <template>
   <div id="app">
-    <h1>Trivia app made with Vue.js</h1>
+    <h1>{{ title }}</h1>
     <GameView
-      v-if="!showFinalScreen"
+      v-if="currentScreen === 'game'"
       @show-final-screen="onShowFinalScreen"></GameView>
     <FinalScreenComp
-      v-if="showFinalScreen"
+      v-else-if="currentScreen === 'final'"
       :score="finalScore"
       @new-game="onNewGame"></FinalScreenComp>
+    <MenuComp v-else @standard-game="onStandardGame"></MenuComp>
   </div>
 </template>
 
 <script>
 import GameView from './components/Game/GameView.vue';
 import FinalScreenComp from './components/FinalScreenComp.vue';
+import MenuComp from './components/MenuComp.vue';
 
 export default {
   name: 'App',
-  components: { GameView, FinalScreenComp },
+  components: { MenuComp, GameView, FinalScreenComp },
   data: function () {
     return {
-      showFinalScreen: false,
       finalScore: 0,
+      currentScreen: 'menu',
     };
+  },
+  computed: {
+    title: function () {
+      if (this.currentScreen === 'game') return 'Answer 10 questions!';
+      if (this.currentScreen === 'final') return 'Summary';
+      return 'Trivia app made with Vue.js';
+    },
   },
   methods: {
     onShowFinalScreen: function (score) {
       this.finalScore = score;
-      this.showFinalScreen = true;
+      this.currentScreen = 'final';
     },
     onNewGame: function () {
-      this.showFinalScreen = false;
+      this.currentScreen = 'menu';
+    },
+    onStandardGame: function () {
+      this.currentScreen = 'game';
     },
   },
 };

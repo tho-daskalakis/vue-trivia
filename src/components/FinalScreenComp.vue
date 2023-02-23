@@ -4,7 +4,7 @@
       You answered {{ score }} questions correct out of 10. Your final score is
       {{ finalScore }} %.
     </p>
-    <button @click="onClick">New game</button>
+    <button class="new-game-btn" @click="onClick">New game</button>
   </div>
 </template>
 
@@ -29,3 +29,12 @@ export default {
   },
 };
 </script>
+
+<style>
+.new-game-btn {
+  width: 200px;
+  height: 50px;
+  justify-self: center;
+  align-self: center;
+}
+</style>
