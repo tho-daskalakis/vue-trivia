@@ -1,8 +1,8 @@
 <template>
   <div class="final-score-view">
     <p>
-      You answered {{ score }} questions correct out of 10. Your final score is
-      {{ finalScore }} %.
+      You answered {{ score }} questions correct out of {{ questionCount }}.
+      Your final score is {{ finalScore }} %.
     </p>
     <button class="new-game-btn" @click="onClick">New game</button>
   </div>
@@ -16,10 +16,14 @@ export default {
       type: Number,
       required: true,
     },
+    questionCount: {
+      type: Number,
+      required: true,
+    },
   },
   computed: {
     finalScore: function () {
-      return Math.round((this.score * 100) / 10);
+      return Math.round((this.score * 100) / this.questionCount);
     },
   },
   methods: {

@@ -2,11 +2,12 @@
   <div id="app">
     <h1>{{ title }}</h1>
     <GameView
-      :mode="mode"
       v-if="currentScreen === 'game'"
+      :mode="mode"
       @show-final-screen="onShowFinalScreen"></GameView>
     <FinalScreenComp
       v-else-if="currentScreen === 'final'"
+      :questionCount="questionCount"
       :score="finalScore"
       @new-game="onNewGame"></FinalScreenComp>
     <MenuComp
@@ -27,6 +28,7 @@ export default {
   data: function () {
     return {
       finalScore: 0,
+      questionCount: -1,
       currentScreen: 'menu',
       mode: null,
     };
@@ -49,8 +51,9 @@ export default {
     },
   },
   methods: {
-    onShowFinalScreen: function (score) {
-      this.finalScore = score;
+    onShowFinalScreen: function (gameData) {
+      this.finalScore = gameData.score;
+      this.questionCount = gameData.questionCount;
       this.currentScreen = 'final';
     },
     onNewGame: function () {

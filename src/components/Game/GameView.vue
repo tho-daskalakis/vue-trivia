@@ -11,7 +11,7 @@
       v-if="questionCount < 10"
       :disabled="btnDisabled"
       class="get-question-btn"
-      @click="handleOnClick">
+      @click="onGetQuestion">
       Next question
     </button>
     <div class="game-info-display">
@@ -28,6 +28,8 @@ import QuestionDisplayComp from './Question/QuestionDisplayComp.vue';
 import shuffleArray from './utils/shuffleArray';
 import getRandomInt from './utils/getRandomInt';
 import parseHTML from './utils/parseHTML';
+import handleGameSharedActions from './postAnswerActions/handleGameSharedActions';
+import handleGameModeActions from './postAnswerActions/handleGameModeActions';
 
 export default {
   name: 'GameView',
@@ -54,7 +56,8 @@ export default {
   created: function () {
     this.displayDefaultValues();
     this.getSessionToken();
-    this.handleOnClick();
+    this.handleGameModeActions.bind(this);
+    this.onGetQuestion();
   },
   methods: {
     displayDefaultValues: function () {
@@ -67,47 +70,29 @@ export default {
       ];
     },
     getSessionToken: async function () {
-      const response = await fetch(
-        'https://opentdb.com/api_token.php?command=request'
-      );
+      try {
+        const response = await fetch(
+          'https://opentdb.com/api_token.php?command=request'
+        );
 
-      if (response.ok) {
-        const data = await response.json();
-        // console.log(data);
-        this.sessionToken = data.token;
-      } else {
-        alert(response.statusText);
+        if (response.ok) {
+          const data = await response.json();
+          this.sessionToken = data.token;
+        } else {
+          alert(response.statusText);
+        }
+      } catch (error) {
+        alert(error);
       }
     },
     onHasChosenAnswer: function (isCorrect) {
-      this.answersEnabled = false;
-      this.showAnswers = true;
-      this.questionCount++;
-      if (isCorrect) this.score++;
+      this.handleGameSharedActions(isCorrect);
+      this.handleGameModeActions(this.mode);
 
-      if (this.mode === 'standard') {
-        if (this.questionCount >= 10) {
-          this.questionText = 'Waiting for results...';
-          // Wait 1.5 second
-          setTimeout(() => {
-            this.$emit('show-final-screen', this.score);
-            this.showFinalScreen();
-          }, 1500);
-          return;
-        }
-      } else if (this.mode === 'rush') {
-        if (!isCorrect) {
-          this.lives--;
-          if (this.lives < 1) {
-            // TODO: Call final screen
-            return;
-          }
-        }
-      }
-
+      // Cleanup actions
       this.btnDisabled = false;
     },
-    handleOnClick: function () {
+    onGetQuestion: function () {
       this.showAnswers = false;
       this.btnDisabled = true;
       this.displayDefaultValues();
@@ -122,7 +107,7 @@ export default {
 
         if (response.ok) {
           const data = await response.json();
-          // console.log(data);
+          // TODO: Handle bad API response
 
           // Handle question
           const question = data.results[0].question;
@@ -153,9 +138,19 @@ export default {
       this.shuffleArray(answers);
       this.answers = answers;
     },
+    handleGameSharedActions: handleGameSharedActions,
+    handleGameModeActions: handleGameModeActions,
     showFinalScreen: function () {
-      this.$emit('show-final-screen', this.score);
-    }.bind(this),
+      this.questionText = 'Waiting for results...';
+      const gameData = {
+        score: this.score,
+        questionCount: this.questionCount,
+      };
+      // Wait 1.5 second
+      setTimeout(() => {
+        this.$emit('show-final-screen', gameData);
+      }, 1500);
+    },
     shuffleArray: shuffleArray,
     getRandomInt: getRandomInt,
     parseHTML: parseHTML,
