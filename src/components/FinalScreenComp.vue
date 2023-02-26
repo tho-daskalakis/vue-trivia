@@ -23,6 +23,7 @@ export default {
   },
   computed: {
     finalScore: function () {
+      if (this.questionCount === 0) return 0;
       return Math.round((this.score * 100) / this.questionCount);
     },
   },

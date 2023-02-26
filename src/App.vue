@@ -41,7 +41,7 @@ export default {
             return 'Answer 10 questions!';
 
           case 'rush':
-            return 'Answer as many questions before the time runs out!';
+            return 'Answer as many questions as you can before time runs out!';
           default:
             return 'Game mode';
         }
@@ -79,6 +79,6 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+  margin-top: 10px;
 }
 </style>

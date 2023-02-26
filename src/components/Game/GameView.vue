@@ -18,6 +18,8 @@
       <p v-if="questionCount" class="score-display">
         Your current score: {{ score }} out of {{ questionCount }} questions
       </p>
+      <p v-if="mode === 'rush'">Lives: {{ lives }}</p>
+      <p v-if="mode === 'rush'">Time left: {{ timeLeft }} seconds</p>
     </div>
   </div>
 </template>
@@ -30,6 +32,7 @@ import getRandomInt from './utils/getRandomInt';
 import parseHTML from './utils/parseHTML';
 import handleGameSharedActions from './postAnswerActions/handleGameSharedActions';
 import handleGameModeActions from './postAnswerActions/handleGameModeActions';
+import { deciSecondCounter } from './utils/timer';
 
 export default {
   name: 'GameView',
@@ -51,6 +54,7 @@ export default {
       score: 0,
       questionCount: 0,
       lives: 3,
+      timeLeft: 120,
     };
   },
   created: function () {
@@ -58,6 +62,15 @@ export default {
     this.getSessionToken();
     this.handleGameModeActions.bind(this);
     this.onGetQuestion();
+
+    if (this.mode === 'rush') {
+      this.reduceTime.bind(this);
+      this.deciSecondCounter.bind(this);
+      this.deciSecondCounter(this.reduceTime);
+    }
+  },
+  beforeDestroy: function () {
+    clearInterval(this.timer);
   },
   methods: {
     displayDefaultValues: function () {
@@ -154,6 +167,24 @@ export default {
     shuffleArray: shuffleArray,
     getRandomInt: getRandomInt,
     parseHTML: parseHTML,
+    deciSecondCounter: deciSecondCounter,
+    reduceTime: function () {
+      this.timeLeft = (this.timeLeft - 0.1).toFixed(1);
+      if (this.timeLeft <= 0) {
+        this.timeUp();
+      }
+    },
+    timeUp: function () {
+      clearInterval(this.timer);
+      this.questionText = 'Time up!';
+      this.answersEnabled = false;
+      this.btnDisabled = true;
+
+      // Wait 1.5 second
+      setTimeout(() => {
+        this.showFinalScreen();
+      }, 1500);
+    },
   },
 };
 </script>
