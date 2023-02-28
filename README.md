@@ -21,6 +21,14 @@ npm run serve
 
 ### Compiles and minifies for production
 
+#### Using bash
+
+```
+bash deploy.sh
+```
+
+#### Using CLI
+
 ```
 npm run build
 ```
